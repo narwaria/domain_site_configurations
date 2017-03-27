@@ -1,0 +1,8 @@
+name: Domain Site Settings
+type: module
+description: Basic Site Setting for Domains.
+core: 8.x
+package: domain
+dependencies:
+  - domain
+  - domain_config

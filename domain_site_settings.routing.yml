@@ -1,0 +1,18 @@
+domain_site_settings.config_form:
+  path: '/admin/config/domain_site_settings/{domain_id}/config'
+  defaults:
+    _form: '\Drupal\domain_site_settings\Form\DomainConfigSettingsForm'
+    _title: 'DomainConfigSettingsForm'
+  requirements:
+    _permission: 'domain site settings'
+  options:
+    _admin_route: TRUE
+domain_site_settings.list_controller:
+  path: '/admin/config/domain_site_settings/list'
+  defaults:
+    _controller: '\Drupal\domain_site_settings\Controller\DomainSiteSettingsController::domains_list'
+    _title: 'Domain basic site settings'
+  requirements:
+    _permission: 'domain site settings'
+  options:
+    _admin_route: TRUE
