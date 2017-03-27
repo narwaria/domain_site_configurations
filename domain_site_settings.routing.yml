@@ -1,5 +1,5 @@
 domain_site_settings.config_form:
-  path: '/admin/config/domain_site_settings/{domain_id}/config'
+  path: '/admin/config/domain_site_settings/{domain_id}/edit'
   defaults:
     _form: '\Drupal\domain_site_settings\Form\DomainConfigSettingsForm'
     _title: 'DomainConfigSettingsForm'
