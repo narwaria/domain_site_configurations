@@ -98,7 +98,10 @@ class DomainConfigSettingsForm extends ConfigFormBase {
     if (empty($site_mail)) {
       $site_mail = ini_get('sendmail_from');
     }
-
+    
+    if ( $config->get($domain_id) !== NULL) {
+      $site_mail = $config->get($domain_id . '.site_mail');
+    }
     $form['site_information'] = array(
       '#type' => 'details',
       '#title' => t('Site details'),
@@ -107,13 +110,13 @@ class DomainConfigSettingsForm extends ConfigFormBase {
     $form['site_information']['site_name'] = array(
       '#type' => 'textfield',
       '#title' => t('Site name'),
-      '#default_value' => $site_config->get('name'),
+      '#default_value' => ($config->get($domain_id . '.domain_id') !== NULL) ? $config->get($domain_id . '.site_name') : $site_config->get('name'),
       '#required' => TRUE,
     );
     $form['site_information']['site_slogan'] = array(
       '#type' => 'textfield',
       '#title' => t('Slogan'),
-      '#default_value' => $site_config->get('slogan'),
+      '#default_value' => ($config->get($domain_id . '.domain_id') !== NULL) ? $config->get($domain_id . '.site_slogan') : $site_config->get('slogan'),
       '#description' => t("How this is used depends on your site's theme."),
     );
     $form['site_information']['site_mail'] = array(
@@ -129,6 +132,7 @@ class DomainConfigSettingsForm extends ConfigFormBase {
       '#open' => TRUE,
     );
     $front_page = $site_config->get('page.front') != '/user/login' ? $this->aliasManager->getAliasByPath($site_config->get('page.front')) : '';
+    $front_page = ($config->get($domain_id . 'domain_id') !== NULL) ? $config->get($domain_id . '.site_frontpage') : $front_page;
     $form['front_page']['site_frontpage'] = array(
       '#type' => 'textfield',
       '#title' => t('Default front page'),
@@ -145,14 +149,14 @@ class DomainConfigSettingsForm extends ConfigFormBase {
     $form['error_page']['site_403'] = array(
       '#type' => 'textfield',
       '#title' => t('Default 403 (access denied) page'),
-      '#default_value' => $site_config->get('page.403'),
+      '#default_value' => ($config->get($domain_id . 'domain_id') !== NULL) ? $config->get($domain_id . '.site_403') : $site_config->get('page.403'),
       '#size' => 40,
       '#description' => t('This page is displayed when the requested document is denied to the current user. Leave blank to display a generic "access denied" page.'),
     );
     $form['error_page']['site_404'] = array(
       '#type' => 'textfield',
       '#title' => t('Default 404 (not found) page'),
-      '#default_value' => $site_config->get('page.404'),
+      '#default_value' => ($config->get($domain_id . 'domain_id') !== NULL) ? $config->get($domain_id . '.site_404') : $site_config->get('page.404'),
       '#size' => 40,
       '#description' => t('This page is displayed when no other content matches the requested document. Leave blank to display a generic "page not found" page.'),
     );
@@ -180,12 +184,20 @@ class DomainConfigSettingsForm extends ConfigFormBase {
 //    $this->config('domain_site_settings.domainconfigsettings')
 //      ->set('domain_id', $form_state->getValue('domain_id'))
 //      ->save();
-    $domains = $this->domainLoader->loadMultipleSorted();
-    $config = $this->config('domain_site_settings.domainconfigsettings');
-    foreach ($domains as $domain) {
-      $domainId = $domain->id();
-      $config->set($domainId, $form_state->getValue($domainId));
-    }
+    $domain_id          =   $form_state->getValue('domain_id');
+    $site_name          =   $form_state->getValue('site_name');
+    $site_slogan        =   $form_state->getValue('site_slogan');
+    $site_mail          =   $form_state->getValue('site_mail');
+    $site_frontpage     =   $form_state->getValue('site_frontpage');
+    $site_403           =   $form_state->getValue('site_403');
+    $site_404           =   $form_state->getValue('site_404');
+    $config             = $this->config('domain_site_settings.domainconfigsettings');
+    $config->set($domain_id.'.domain_id', $domain_id);
+    $config->set($domain_id.'.site_name', $site_name);
+    $config->set($domain_id.'.site_slogan', $site_slogan);
+    $config->set($domain_id.'.site_mail', $site_mail);
+    $config->set($domain_id.'.site_403', $site_403);
+    $config->set($domain_id.'.site_404', $site_404);
     $config->save();
   }
 
